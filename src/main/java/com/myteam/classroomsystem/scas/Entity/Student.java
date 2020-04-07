@@ -4,7 +4,6 @@ public class Student {
 
     private long sid;
     private String name;
-    private String password;
     private String email;
     private String phone;
     private String myClass;
@@ -19,7 +18,6 @@ public class Student {
         this.sid = sid;
     }
 
-
     public String getName() {
         return name;
     }
@@ -27,16 +25,6 @@ public class Student {
     public void setName(String name) {
         this.name = name;
     }
-
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
 
     public String getEmail() {
         return email;

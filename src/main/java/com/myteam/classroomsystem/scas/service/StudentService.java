@@ -1,5 +1,6 @@
 package com.myteam.classroomsystem.scas.service;
 
+import com.myteam.classroomsystem.scas.mapper.StudentMapper;
 import com.myteam.classroomsystem.scas.utils.RestTemplateConfig;
 import com.myteam.classroomsystem.scas.utils.ResultVO;
 import com.myteam.classroomsystem.scas.utils.Token;
@@ -7,6 +8,7 @@ import net.sf.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 
 @Service
 public class StudentService {
@@ -16,6 +18,9 @@ public class StudentService {
 
     @Resource
     private RestTemplateConfig restTemplateConfig;
+
+    @Resource
+    private StudentMapper studentMapper;
 
     /**
      * 小程序商户登录
@@ -29,12 +34,23 @@ public class StudentService {
         String codereslut = restTemplateConfig.getForObject(url + "?appid=" + appid + "&secret=" + secret + "&js_code=" + js_code + "&grant_type=" + grant_type, String.class);
         JSONObject jsonObject = JSONObject.fromObject(codereslut);
         //解析出session_key，openid
-        String session_key = jsonObject.getString("session_key");
+//        String session_key = jsonObject.getString("session_key");
         String openid = jsonObject.getString("openid");
         //生成token
-        String token = mytoken.generateToken(openid, session_key);
+//        String token = mytoken.generateToken(openid, session_key);
         //返回结果
-        return ResultVO.getSuccessResultWithData("登陆成功", token);
+        System.out.println("openid :"+openid);
+        return ResultVO.getSuccessWithData("小程序登陆成功", openid);
+    }
+
+    /*
+     * 学生注册
+     * */
+    public ResultVO addStudent(HashMap<String, Object> param) {
+        if (studentMapper.addStudent(param) > 0) {
+            return ResultVO.getSuccess("注册成功");
+        }
+        return ResultVO.getFailed("注册失败");
     }
 
 }
