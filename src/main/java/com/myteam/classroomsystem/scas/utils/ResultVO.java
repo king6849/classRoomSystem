@@ -30,21 +30,21 @@ public class ResultVO<T> implements Serializable {
      * 成功的ResultVO格式
      **/
     public static <T> ResultVO getSuccess(String msg) {
-        return new ResultVO(100, msg);
+        return new ResultVO(200, msg);
     }
 
     /**
      * 成功的带Data的ResultVO格式
      **/
     public static <T> ResultVO getSuccessWithData(String msg, T data) {
-        return new ResultVO(100, msg, data);
+        return new ResultVO(200, msg, data);
     }
 
     /**
      * 失败的ResultVO格式
      **/
     public static <T> ResultVO getFailed(String msg) {
-        return new ResultVO(101, msg);
+        return new ResultVO(100, msg);
     }
 
     /**

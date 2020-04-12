@@ -1,56 +1,25 @@
 package com.myteam.classroomsystem.scas.service;
 
-import com.myteam.classroomsystem.scas.mapper.StudentMapper;
-import com.myteam.classroomsystem.scas.utils.RestTemplateConfig;
+import com.myteam.classroomsystem.scas.Entity.Feedback;
+import com.myteam.classroomsystem.scas.Entity.Student;
 import com.myteam.classroomsystem.scas.utils.ResultVO;
-import com.myteam.classroomsystem.scas.utils.Token;
-import net.sf.json.JSONObject;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
+import java.io.IOException;
 
-@Service
-public class StudentService {
+public interface StudentService {
 
-    @Resource
-    private Token mytoken;
+    //    学生微信登录
+    public ResultVO studentLogin(String name,String password) throws IOException;
 
-    @Resource
-    private RestTemplateConfig restTemplateConfig;
+    //学生注册
+    public ResultVO addStudent(Student student);
 
-    @Resource
-    private StudentMapper studentMapper;
+    //学生反馈
+    public ResultVO contactUs(Feedback feedback);
 
-    /**
-     * 小程序商户登录
-     */
-    public ResultVO studentLogin(String code) throws RuntimeException {
-        String url = "https://api.weixin.qq.com/sns/jscode2session";
-        String appid = "wx2766c4dd09b4cf2b";
-        String secret = "407ff0b62ea3d9632307c7a9bed5122f";
-        String js_code = code;
-        String grant_type = "authorization_code";
-        String codereslut = restTemplateConfig.getForObject(url + "?appid=" + appid + "&secret=" + secret + "&js_code=" + js_code + "&grant_type=" + grant_type, String.class);
-        JSONObject jsonObject = JSONObject.fromObject(codereslut);
-        //解析出session_key，openid
-//        String session_key = jsonObject.getString("session_key");
-        String openid = jsonObject.getString("openid");
-        //生成token
-//        String token = mytoken.generateToken(openid, session_key);
-        //返回结果
-        System.out.println("openid :"+openid);
-        return ResultVO.getSuccessWithData("小程序登陆成功", openid);
-    }
+    //管理员回答反馈
+    public ResultVO contactStu(Feedback feedback);
 
-    /*
-     * 学生注册
-     * */
-    public ResultVO addStudent(HashMap<String, Object> param) {
-        if (studentMapper.addStudent(param) > 0) {
-            return ResultVO.getSuccess("注册成功");
-        }
-        return ResultVO.getFailed("注册失败");
-    }
-
+    //完成反馈
+    public ResultVO finishFeedBack(Feedback feedback);
 }
