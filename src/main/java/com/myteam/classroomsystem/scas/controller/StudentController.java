@@ -1,5 +1,6 @@
 package com.myteam.classroomsystem.scas.controller;
 
+import com.myteam.classroomsystem.scas.Entity.Application_form;
 import com.myteam.classroomsystem.scas.Entity.Feedback;
 import com.myteam.classroomsystem.scas.Entity.Student;
 import com.myteam.classroomsystem.scas.Entity.TeacherForSeacher;
@@ -46,6 +47,11 @@ public class StudentController {
         return studentService.contactUs(feedback);
     }
 
+    /**
+     *
+     * @param feedback
+     * @return
+     */
     @PostMapping("/contactStu")
     public ResultVO contactStu(@RequestBody Feedback feedback) {
         return studentService.contactStu(feedback);
@@ -58,13 +64,31 @@ public class StudentController {
 
     /*  *
      * @Description: 索取所有的老师
-     * @Param: []
-     * @return: com.myteam.classroomsystem.scas.utils.ResultVO
      * @Author: king
      * @Date: 2020/4/12
      */
     @PostMapping("/getTeacher")
     public List<TeacherForSeacher> getTeacher() {
         return teacherService.findAllTeacherByDep();
+    }
+
+    /*  *
+     * @Description:添加申请表单
+     * @Author: king
+     * @Date: 2020/4/14
+     */
+    @PostMapping("/apply")
+    public ResultVO addForm(@RequestBody Application_form application_form) {
+        return studentService.addForm(application_form);
+    }
+
+    /*  *
+     * @Description: 更新信息
+     * @Author: king
+     * @Date: 2020/4/14
+     */
+    @PostMapping("/studentInfo")
+    public ResultVO studentInfo(String phone, String email, String sid) {
+        return studentService.studentInfo(phone, email, sid);
     }
 }

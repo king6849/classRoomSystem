@@ -26,7 +26,7 @@ public interface StudentMapper {
      * @Author: king
      * @Date: 2020/4/10
      */
-    @Select("select sid,password from student where sid=#{sid}")
+    @Select("select * from student where sid=#{sid}")
     public Student findStudentBySid(String sid);
 
     /**
@@ -58,5 +58,9 @@ public interface StudentMapper {
      */
     @Update("update feedback set  finish_time=#{finishTime},status=1  where id=#{id};")
     public int finishFeedBack(long id, Date finishTime);
+
+    //个人信息
+    @Update("update student set phone=#{phoen} ,email=#{email} where sid=#{sid}")
+    public int  studentInfo(@Param("phone") String phone, @Param("email") String email, @Param("sid") String sid);
 
 }

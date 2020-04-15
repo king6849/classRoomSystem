@@ -1,6 +1,8 @@
 package com.myteam.classroomsystem.scas.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -19,8 +21,10 @@ public class Application_form implements Serializable {
     private String organization;
     private int member;
     @Field("application_time")
+    @JsonFormat(timezone = "GMT-5", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date applicationTime;
     @Field("end_time")
+    @JsonFormat(timezone = "GMT-5", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
     private String reason;
     //辅导员工号
@@ -42,10 +46,13 @@ public class Application_form implements Serializable {
     // 1表示等待系部老师批准，
     // 2表示等待审批员批准
     // 3表示该申请单已完成批准，学生可以看到申请单的申请结果
+    @Value(value = "0")
     private int status;
     //审批人员给学生安排的教室
+    @Value(value = "null")
     private String _class;
     //驳回原因
+    @Value(value = "null")
     private String rejection;
 
 }

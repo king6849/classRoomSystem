@@ -28,6 +28,11 @@ public class TeacherServiceImpl implements TeacherService {
     @Resource
     private RedisTemplate redisTemplate;
 
+    /*  *
+     * @Description: 获取所有的老师姓名，姓氏首字母
+     * @Author: king
+     * @Date: 2020/4/15
+     */
     @Override
     public List<TeacherForSeacher> findAllTeacherByDep() {
         if (lenForTeacher == 0) {
@@ -67,8 +72,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     /*  *
      * @Description: 根据姓名生成姓氏首字母
-     * @Param: [string]
-     * @return: java.lang.String
      * @Author: king
      * @Date: 2020/4/12
      */

@@ -1,8 +1,10 @@
 package com.myteam.classroomsystem.scas.ServiceImpl;
 
+import com.myteam.classroomsystem.scas.Entity.Application_form;
 import com.myteam.classroomsystem.scas.Entity.Feedback;
 import com.myteam.classroomsystem.scas.Entity.Student;
 import com.myteam.classroomsystem.scas.Executor.AsyncService;
+import com.myteam.classroomsystem.scas.ReposityImpl.FormRepositoryImpl;
 import com.myteam.classroomsystem.scas.mapper.StudentMapper;
 import com.myteam.classroomsystem.scas.service.StudentService;
 import com.myteam.classroomsystem.scas.utils.Auth;
@@ -29,6 +31,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Resource
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private FormRepositoryImpl formRepository;
 
     @Resource
     private StudentMapper studentMapper;
@@ -124,4 +129,36 @@ public class StudentServiceImpl implements StudentService {
         return ResultVO.getFailed("发生未知错误,无法发送反馈信息状态,请重试");
     }
 
+    /*  *
+     * @Description: 提交表单
+     * @Param: [application_form]
+     * @return: com.myteam.classroomsystem.scas.utils.ResultVO
+     * @Author: king
+     * @Date: 2020/4/14
+     */
+    @Override
+    public ResultVO addForm(Application_form application_form) {
+        Application_form status = mongoTemplate.save(application_form, "application_form");
+        if (status.getId() == null) {
+            return ResultVO.getFailed("提交失败");
+        }
+        System.out.println("status" + status);
+        return ResultVO.getSuccess("提交成功");
+    }
+
+    /*  *
+     * @Description: 更新信息
+     * @Param: [phone, email, sid]
+     * @return: com.myteam.classroomsystem.scas.utils.ResultVO
+     * @Author: king
+     * @Date: 2020/4/14
+     */
+    @Override
+    public ResultVO studentInfo(String phone, String email, String sid) {
+        int status = studentMapper.studentInfo(phone, email, sid);
+        if (status == 0) {
+            return ResultVO.getFailed("发生未知错误，重稍后重试");
+        }
+        return ResultVO.getSuccess("更新信息成功");
+    }
 }

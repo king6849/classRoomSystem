@@ -53,5 +53,10 @@ public class FormRepositoryImpl {
         return mongoTemplate.find(query, Application_form.class);
     }
 
+//    //学生提交表单
+//    public void addForm(Application_form application_form) {
+//
+//    }
+
 
 }
