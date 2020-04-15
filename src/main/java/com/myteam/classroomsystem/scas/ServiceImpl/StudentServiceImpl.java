@@ -138,6 +138,8 @@ public class StudentServiceImpl implements StudentService {
      */
     @Override
     public ResultVO addForm(Application_form application_form) {
+        application_form.set_class("0");
+        application_form.setRejection("0");
         Application_form status = mongoTemplate.save(application_form, "application_form");
         if (status.getId() == null) {
             return ResultVO.getFailed("提交失败");
