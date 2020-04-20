@@ -6,17 +6,17 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class Receiptform {
+public class ContactUs {
 
     private long id;
+    private String sid;
     private String name;
-    @JsonFormat(timezone = "UTC", pattern = "yyyy-MM-dd HH:mm")
+    private String question;
+    @JsonFormat(pattern = "MM/dd HH:mm" ,timezone = "UTC")
     private Date application_time;
-    @JsonFormat(timezone = "UTC", pattern = "yyyy-MM-dd HH:mm")
-    private Date end_time;
-    private String classroom;
-    private String note;
-    private long cid;
+    private String reply;
+    @JsonFormat(pattern = "MM/dd HH:mm",timezone = "UTC")
+    private Date finish_time;
     private int status;
 
 }

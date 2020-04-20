@@ -5,7 +5,6 @@ import com.myteam.classroomsystem.scas.Entity.Teacher;
 import com.myteam.classroomsystem.scas.Entity.TeacherForSeacher;
 import com.myteam.classroomsystem.scas.mapper.TeacherMepper;
 import com.myteam.classroomsystem.scas.service.TeacherService;
-import net.sf.json.JSONArray;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
@@ -16,14 +15,18 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private TeacherMepper teacherMepper;
-    private static List<TeacherForSeacher> teacherList = new ArrayList<>();
+
     private static int lenForTeacher = 0;
+    private static HashMap<String, List<ItemForteacher>> teacherHash = new HashMap<>();
+
+    private static List<TeacherForSeacher> teacherList = new ArrayList<>();
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -35,39 +38,60 @@ public class TeacherServiceImpl implements TeacherService {
      */
     @Override
     public List<TeacherForSeacher> findAllTeacherByDep() {
+
         if (lenForTeacher == 0) {
-            String teacherStrings = null;
-            teacherStrings = redisTemplate.opsForValue().get("teachers").toString();
-            System.out.println(teacherStrings);
-            //先到redis看是否有缓存
-            if (teacherStrings.length() != 0) {
-                com.alibaba.fastjson.JSONArray jsonArray = com.alibaba.fastjson.JSONArray.parseArray(teacherStrings);
-                teacherList = com.alibaba.fastjson.JSONArray.parseArray(jsonArray.toJSONString(), TeacherForSeacher.class);
-                System.out.println(teacherList);
-            } else {
-                //再到mysql获取
-                List<Teacher> teachers = teacherMepper.findAllTeacher();
-                for (Teacher teacher : teachers) {
-                    String surname = convertSingleHanzi2Pinyin(teacher.getName());
-                    TeacherForSeacher teacherForSeacher = new TeacherForSeacher();
-                    teacherForSeacher.setTitle(surname);
-                    ItemForteacher itemForteacher = new ItemForteacher();
-                    itemForteacher.setName(teacher.getName());
-                    itemForteacher.setKey(surname);
-                    itemForteacher.setTid(teacher.getTid());
-                    List<ItemForteacher> itemForteachersList = new ArrayList<>();
-                    itemForteachersList.add(itemForteacher);
-                    teacherForSeacher.setItem(itemForteachersList);
-                    teacherList.add(teacherForSeacher);
+            List<Teacher> teachers = teacherMepper.findAllTeacher();
+            for (Teacher teacher : teachers) {
+                String teacherName = teacher.getName();
+                char hanzi = teacherName.charAt(0);
+                if (!isChineseChar(hanzi)) {
+                    continue;
                 }
-                JSONArray jsonObject = JSONArray.fromObject(teacherList);
-                String str = jsonObject.toString();
-                //缓存到redis
-                redisTemplate.opsForValue().set("teachers", str);
-                lenForTeacher = teacherList.size();
+                //首字母
+                String surname = convertSingleHanzi2Pinyin(teacherName);
+                TeacherForSeacher teacherForSeacher = new TeacherForSeacher();
+                teacherForSeacher.setTitle(surname);
+                //具体信息
+                ItemForteacher itemForteacher = new ItemForteacher();
+                itemForteacher.setName(teacher.getName());
+                itemForteacher.setKey(surname);
+                itemForteacher.setTid(teacher.getTid());
+                //封装具体信息，可以封装为list ，一共3个字段
+                List<ItemForteacher> itemForteachersList = new ArrayList<>();
+                itemForteachersList.add(itemForteacher);
+                //封装成最终对象
+                teacherForSeacher.setItem(itemForteachersList);
+                //分组
+                List<ItemForteacher> teacherForSeachers = teacherHash.get(surname);
+                if (teacherHash.get(surname) == null) {
+                    teacherForSeachers = new ArrayList<>();
+                    teacherHash.put(surname, teacherForSeachers);
+                }
+                teacherForSeachers.add(itemForteacher);
             }
+            //分好组后，封装返回结果
+            for (String key : teacherHash.keySet()) {
+                //这里表示拼音首字母相同的一类老师
+                TeacherForSeacher teacher = new TeacherForSeacher();
+                teacher.setTitle(key);
+                List<ItemForteacher> items = teacherHash.get(key);
+                teacher.setItem(items);
+                teacherList.add(teacher);
+            }
+            lenForTeacher = teacherList.size();
         }
         return teacherList;
+    }
+
+    /**
+     * 判断一个字符是否是汉字
+     * PS：中文汉字的编码范围：[\u4e00-\u9fa5]
+     *
+     * @param c 需要判断的字符
+     * @return 是汉字(true), 不是汉字(false)
+     */
+    public static boolean isChineseChar(char c) {
+        return String.valueOf(c).matches("[\u4e00-\u9fa5]");
     }
 
     /*  *
@@ -77,6 +101,9 @@ public class TeacherServiceImpl implements TeacherService {
      */
     private String convertSingleHanzi2Pinyin(String string) {
         char hanzi = string.charAt(0);
+        if (!isChineseChar(hanzi)) {
+            return String.valueOf(hanzi);
+        }
         HanyuPinyinOutputFormat outputFormat = new HanyuPinyinOutputFormat();
         outputFormat.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
         String[] res;

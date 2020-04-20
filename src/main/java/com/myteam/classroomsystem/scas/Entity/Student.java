@@ -10,8 +10,7 @@ public class Student {
     private String password;
     private String email;
     private String phone;
-    private String myClass;
+    private String my_class;
     private String department;
-    private String openid;
 
 }

@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Document
-public class Application_form implements Serializable {
+public class Application_form2 implements Serializable {
     @Id
     private String id;
     private String sid;
@@ -20,37 +19,29 @@ public class Application_form implements Serializable {
     private String organization;
     private int member;
     @JsonFormat(timezone = "UTC", pattern = "yyyy-MM-dd HH:mm")
-    @Field("application_time")
-    private Date applicationtime;
+    private Date application_time;
     @JsonFormat(timezone = "UTC", pattern = "yyyy-MM-dd HH:mm")
-    @Field("end_time")
-    private Date endtime;
+    private Date end_time;
     private String reason;
     //辅导员工号
-    @Field("counselor_tid")
-    private Integer counselortid;
+    private Integer counselor_id;
     private String counselor;
     //辅导员审批时间
     @JsonFormat(timezone = "UTC", pattern = "yyyy-MM-dd HH:mm")
-    @Field("counselor_deal_time")
-    private Date counselordealtime;
+    private Date counselor_deal_time;
     //老师工号
-    @Field("department_teacher_tid")
-    private Integer departmentteachertid;
-    @Field("department_teacher")
-    private String departmentteacher;
+    private Integer department_teacher_id;
+    private String department_teacher;
     //系部老师审批时间
     @JsonFormat(timezone = "UTC", pattern = "yyyy-MM-dd HH:mm")
-    @Field("department_teacher_deal_time")
-    private Date departmentteacherdealtime;
+    private Date department_teacher_deal_time;
     //审批员审批时间
     @JsonFormat(timezone = "UTC", pattern = "yyyy-MM-dd HH:mm")
-    @Field("approver_time")
-    private Date approvertime;
+    private Date approver_time;
     private String note;
     //是否需要多媒体 默认为1，需要 ，0是不需要
     private int multimedia;
-    private int classsize;
+    private int class_size;
     //status 申请单的审核状态，
     // -1 表示申请驳回
     // 0表示等待辅导员或者指导老师批准，
@@ -58,5 +49,7 @@ public class Application_form implements Serializable {
     // 2表示等待审批员批准
     // 3表示该申请单已完成批准，学生可以看到申请单的申请结果
     private int status;
+
+
 
 }

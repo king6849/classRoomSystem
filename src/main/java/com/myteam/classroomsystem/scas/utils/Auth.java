@@ -121,7 +121,7 @@ public class Auth {
         HtmlDivision profession = (HtmlDivision) personalIndexPage.getByXPath("/html/body/form/table[3]/tbody/tr/td/table/tbody/tr[1]/td[8]/div").get(0);
         student.setSid(sno.asText());
         student.setName(name.asText());
-        student.setMyClass(_class.asText().substring(0, 9));
+        student.setMy_class(_class.asText().substring(0, 9));
         student.setDepartment(profession.asText().substring(0, 4));
         webClient.close();
     }
@@ -143,8 +143,8 @@ public class Auth {
     public static void main(String[] args) throws IOException {
         Auth auth = new Auth();
 //        auth.login("1740129222", "13465");
-        auth.start("1740129222", "13465");
-        System.out.println(auth.status);
+        Student student = auth.start("1740129222", "17440981109034");
+        System.out.println(student);
     }
 
 }

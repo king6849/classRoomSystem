@@ -21,5 +21,4 @@ public interface TeacherMepper {
     @Select("select name,tid from teacher")
     public List<Teacher> findAllTeacher();
 
-
 }

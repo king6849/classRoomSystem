@@ -1,11 +1,12 @@
 package com.myteam.classroomsystem.scas.controller;
 
-import com.myteam.classroomsystem.scas.Entity.Application_form;
-import com.myteam.classroomsystem.scas.Entity.Student;
+import com.myteam.classroomsystem.scas.Entity.Teacher;
+import com.myteam.classroomsystem.scas.Entity.names;
 import com.myteam.classroomsystem.scas.ReposityImpl.FormRepositoryImpl;
 import com.myteam.classroomsystem.scas.mapper.StudentMapper;
+import com.myteam.classroomsystem.scas.mapper.TestData;
 import com.myteam.classroomsystem.scas.service.StudentService;
-import com.myteam.classroomsystem.scas.utils.Auth;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,9 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.List;
-import java.util.Set;
+import java.util.Random;
 
 @RestController
 public class testController {
@@ -45,63 +45,59 @@ public class testController {
         return "hello world";
     }
 
-    @GetMapping("/test2")
-    public void test2() {
+    @Autowired
+    private FormRepositoryImpl repository;
 
-        redisTemplate.opsForValue().set("test", "1");
-        redisTemplate.opsForValue().set("test", "12");
-        redisTemplate.opsForValue().set("test2", "1");
-        Object test = redisTemplate.opsForValue().get("test");
-        Object test2 = redisTemplate.opsForValue().get("连");
-        if (test2 == null) {
-            System.out.println("不存在");
+    @PostMapping("/test2")
+    public String test2(String sid) {
+        repository.studentFindRecentFormBySid(sid);
+
+        return "hello world";
+    }
+
+
+    @Autowired
+    TestData testData;
+
+    public static String getRandomNickname(int length) {
+        String val = "";
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            val += String.valueOf(random.nextInt(10));
         }
-        System.out.println(test);
+        return val;
     }
 
-    @GetMapping("/test3")
-    public void test3() {
-        List<Application_form> forms = mongoTemplate.findAll(Application_form.class);
-        System.out.println("forms size is ：" + forms.size());
-        System.out.println(forms.get(0));
+    @GetMapping("/test9")
+    public void test9() {
+        List<names> names = testData.names();
+        for (names names1 : names) {
+            Teacher teacher = new Teacher();
+            teacher.setTid(String.valueOf(names1.getId()));
+            teacher.setName(names1.getFull_name());
+            String encodePassword = encoder.encode(String.valueOf(names1.getId()));
+            teacher.setPassword(encodePassword);
+            teacher.setEmail(String.valueOf(names1.getId()) + "@scse.com.cn");
+            int role = (int) Math.floor(Math.random() * Math.floor(3));
+            teacher.setRole(role);
+            String department = "";
+            if (role == 0) {
+                department = "软件系";
+            } else if (role == 1) {
+                department = "计算机系";
+            } else {
+                department = "电子系";
+            }
+            teacher.setDepartment(department);
+            teacher.setPhone(getRandomNickname(11));
+            System.out.println(teacher);
+            testData.insertTeacher(teacher);
+        }
+
     }
 
-    @GetMapping("/test4")
+    @Test
     public void test4() {
-        List<Application_form> list = formRepository.studentFindFormBySidAndSname("king", "1123");
-        System.out.println("list size is :" + list.size());
-        System.out.println(list.get(0).toString());
-    }
-
-    @PostMapping("/test5")
-    public void test4(Student student) {
-        System.out.println("studentRegistered :" + student.toString());
-        if (studentMapper.addStudent(student) > 0) {
-            System.out.println("添加成功");
-        }
-    }
-
-    @GetMapping("/test6")
-    public void tet6() {
-        Set sets = redisTemplate.keys("彭*");
-        System.out.println(sets.toString());
-    }
-
-
-    public Student tet7() throws IOException {
-        Auth auth = new Auth();
-        Student student = auth.start("1740129222", "17440981109034");
-        System.out.println(student.toString());
-        return student;
-    }
-
-    @PostMapping("/test8")
-    public void test8() {
-        String teacherStrings = redisTemplate.opsForValue().get("teachers").toString();
-        if (teacherStrings == null || teacherStrings.equals("")) {
-            System.out.println("is null");
-        }
-        System.out.println("test8+++++++++++");
-        System.out.println(teacherStrings);
+        System.out.println((int) Math.floor(Math.random() * Math.floor(3)));
     }
 }

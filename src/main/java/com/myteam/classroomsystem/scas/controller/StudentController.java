@@ -1,17 +1,12 @@
 package com.myteam.classroomsystem.scas.controller;
 
-import com.myteam.classroomsystem.scas.Entity.Application_form;
-import com.myteam.classroomsystem.scas.Entity.Feedback;
-import com.myteam.classroomsystem.scas.Entity.Student;
-import com.myteam.classroomsystem.scas.Entity.TeacherForSeacher;
+import com.myteam.classroomsystem.scas.Entity.*;
 import com.myteam.classroomsystem.scas.service.StudentService;
 import com.myteam.classroomsystem.scas.service.TeacherService;
 import com.myteam.classroomsystem.scas.utils.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,25 +37,11 @@ public class StudentController {
     }
 
     //学生反馈信息
-    @PostMapping("/contactUs")
-    public ResultVO contactUs(@RequestBody Feedback feedback) {
-        return studentService.contactUs(feedback);
+    @PostMapping("/suggestion")
+    public ResultVO contactUs(Feedback feedback) {
+        return studentService.suggestion(feedback);
     }
 
-    /**
-     *
-     * @param feedback
-     * @return
-     */
-    @PostMapping("/contactStu")
-    public ResultVO contactStu(@RequestBody Feedback feedback) {
-        return studentService.contactStu(feedback);
-    }
-
-    @PostMapping("/finishFeedBack")
-    public ResultVO finishFeedBack(@RequestBody Feedback feedback) {
-        return studentService.finishFeedBack(feedback);
-    }
 
     /*  *
      * @Description: 索取所有的老师
@@ -90,5 +71,111 @@ public class StudentController {
     @PostMapping("/studentInfo")
     public ResultVO studentInfo(String phone, String email, String sid) {
         return studentService.studentInfo(phone, email, sid);
+    }
+
+    /*  *
+     * @Description:最近申请的表单
+     * @Author: king
+     * @Date: 2020/4/16
+     */
+    @PostMapping("/applystatus")
+    public ResultVO applystatus(String sid) {
+        return studentService.applystatus(sid);
+    }
+
+    /*  *
+     * @Description: 学生更新个人信息
+     * @Author: king
+     * @Date: 2020/4/17
+     */
+    @PostMapping("/updateInfo")
+    public ResultVO updatePersonalInfo(String sid, String phone, String email) {
+        return studentService.updatePersonalInfo(sid, phone, email);
+    }
+
+    /*  *
+     * @Description:获取回执单
+     * @Author: king
+     * @Date: 2020/4/17
+     */
+    @PostMapping("/getReceiptformByCid")
+    public ResultVO getReceiptFormByCid(String cid) {
+        return studentService.getReceiptFormInfo(cid);
+    }
+
+
+    /*  *
+     * @Description: 提交报修信息
+     * @Author: king
+     * @Date: 2020/4/17
+     */
+    @PostMapping("/repair")
+    public ResultVO repair(String sid, String name, String phone, @RequestParam(required = false) String[] repairs,
+                           String description, String classroom, MultipartFile[] images) throws IOException {
+
+        if (repairs == null) {
+            return ResultVO.getFailed("你还没有选择报修的物品");
+        }
+        int len = repairs.length;
+        Repair repair = new Repair();
+        repair.setSid(sid);
+        repair.setName(name);
+        repair.setPhone(phone);
+        repair.setDescription(description);
+        repair.setClassroom(classroom);
+        String repairString = "";
+        int tmp_len = 0;
+        for (String rep : repairs) {
+            repairString += rep;
+            if (tmp_len != len - 1) {
+                repairString += ",";
+            }
+            tmp_len++;
+        }
+        repair.setRepairs(repairString);
+        return studentService.repair(repair, images);
+    }
+
+
+    /*  *
+     * @Description: 历史申请记录
+     * @Author: king
+     * @Date: 2020/4/17
+     */
+    @PostMapping("/history")
+    public ResultVO historyForm(String sid) {
+        return studentService.historyForm(sid);
+    }
+
+
+    /*  *
+     * @Description: 回执历史记录
+     * @Author: king
+     * @Date: 2020/4/18
+     */
+    @PostMapping("/getReceiptformBySid")
+    public ResultVO getReceiptformBySid(String sid) {
+        return studentService.getReceiptformBySid(sid);
+    }
+
+    /*  *
+     * @Description:联系管理员
+     * @Author: king
+     * @Date: 2020/4/18
+     */
+    @PostMapping("/contactUs")
+    public ResultVO contactUs(String sid, String question) {
+        return studentService.contactUs(sid, question);
+    }
+
+
+    /*  *
+     * @Description: 学生联系管理员的全部记录
+     * @Author: king
+     * @Date: 2020/4/18
+     */
+    @PostMapping("/contactHistory")
+    public ResultVO contactHistory(String sid) {
+        return studentService.contactHistory(sid);
     }
 }

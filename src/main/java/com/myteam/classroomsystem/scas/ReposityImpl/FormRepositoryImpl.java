@@ -2,6 +2,7 @@ package com.myteam.classroomsystem.scas.ReposityImpl;
 
 import com.myteam.classroomsystem.scas.Entity.Application_form;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -31,32 +32,16 @@ public class FormRepositoryImpl {
         return mongoTemplate.find(query, Application_form.class);
     }
 
-    //系部老师根据工号，姓名查询是否有待自己审核的申请表
-    public List<Application_form> department_teacherFindByTidAndTname(String department_teacher_id, String department_teacher) {
-        Criteria criteriaId = Criteria.where("department_teacher_id").is(department_teacher_id);
-        Criteria criteriaName = Criteria.where("department_teacher").is(department_teacher);
-        Criteria criteriaStatus = Criteria.where("status").is(department_teacherLevel);
-        Criteria criteria = new Criteria();
-        criteria.andOperator(criteriaId, criteriaName, criteriaStatus);
-        Query query = Query.query(criteria);
-        return mongoTemplate.find(query, Application_form.class);
+    //学生查询最近一次申请记录
+    public List<Application_form> studentFindRecentFormBySid(String sid) {
+        Query query = new Query();
+        Criteria criteria = Criteria.where("sid").is(sid);
+        query.addCriteria(criteria);
+        query.limit(1);
+        query.with(Sort.by(Sort.Order.desc("application_time")));
+        List<Application_form> list = mongoTemplate.find(query, Application_form.class);
+        return list;
     }
-
-    //学生查询待审核的申请表
-    public List<Application_form> studentFindFormBySidAndSname(String name, String sid) {
-        Criteria criteriaId = Criteria.where("name").is(name);
-        Criteria criteriaName = Criteria.where("sid").is(sid);
-        Criteria criteriaStatus = Criteria.where("status").lt(finishLevel);
-        Criteria criteria = new Criteria();
-        criteria.andOperator(criteriaId, criteriaName, criteriaStatus);
-        Query query = Query.query(criteria);
-        return mongoTemplate.find(query, Application_form.class);
-    }
-
-//    //学生提交表单
-//    public void addForm(Application_form application_form) {
-//
-//    }
 
 
 }

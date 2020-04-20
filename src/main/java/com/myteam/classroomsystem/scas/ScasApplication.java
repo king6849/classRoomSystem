@@ -34,6 +34,7 @@ public class ScasApplication {
         redisTemplate.setHashKeySerializer(stringSerializer);
     }
 
+    //    spring 安全加密
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
