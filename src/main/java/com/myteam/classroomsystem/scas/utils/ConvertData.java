@@ -21,7 +21,7 @@ public class ConvertData {
         application_form2.setName(application_form.getName());
         application_form2.setPhone(application_form.getPhone());
         application_form2.setOrganization(application_form.getOrganization());
-        application_form2.setMember(application_form.getMember());
+        application_form2.setMembers(application_form.getMembers());
         application_form2.setApplication_time(application_form.getApplicationtime());
         application_form2.setEnd_time(application_form.getEndtime());
         application_form2.setReason(application_form.getReason());
@@ -49,7 +49,7 @@ public class ConvertData {
         application_form.setName(application_form2.getName());
         application_form.setPhone(application_form2.getPhone());
         application_form.setOrganization(application_form2.getOrganization());
-        application_form.setMember(application_form2.getMember());
+        application_form.setMembers(application_form2.getMembers());
         application_form.setApplicationtime(application_form2.getApplication_time());
         application_form.setEndtime(application_form2.getEnd_time());
         application_form.setReason(application_form2.getReason());

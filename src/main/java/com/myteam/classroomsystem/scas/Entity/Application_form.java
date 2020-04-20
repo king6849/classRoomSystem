@@ -18,7 +18,7 @@ public class Application_form implements Serializable {
     private String name;
     private String phone;
     private String organization;
-    private int member;
+    private int members;
     @JsonFormat(timezone = "UTC", pattern = "yyyy-MM-dd HH:mm")
     @Field("application_time")
     private Date applicationtime;

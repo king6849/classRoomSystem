@@ -6,6 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 @Configuration
 public class MvcConfig extends WebMvcConfigurationSupport {
+    //图片接收保存的位置
     public static final String repairImageSavePath = "C:\\idea\\porjects\\images";
 
     @Override
